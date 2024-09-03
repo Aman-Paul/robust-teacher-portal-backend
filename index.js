@@ -1,4 +1,5 @@
 const express = require('express');
+const { initializeDatabase } = require('./database/dbConfig');
 require('dotenv').config()
 
 const app = express();
@@ -6,6 +7,8 @@ const port = process.env.PORT || "8000";
 
 // Middleware to parse JSON bodies
 app.use(express.json());
+
+initializeDatabase();
 
 // Basic route
 app.get('/', (req, res) => {
