@@ -1,5 +1,7 @@
-const healthCheck = (req, res, next) => {
-    res.send({ message: "Server is running fine."})
-}
+const healthCheck = require("./health.controller");
+const authController = require("./auth.controller");
 
-module.exports = healthCheck
+module.exports = {
+    healthCheck,
+    authController
+}

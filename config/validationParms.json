@@ -1,0 +1,3 @@
+{
+    "signUpParams": ["email", "password", "username"]
+}

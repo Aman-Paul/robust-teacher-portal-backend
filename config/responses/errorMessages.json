@@ -1,0 +1,5 @@
+{
+    "internalServerError": "Internal server error.",
+    "userAlreadyExists": "User already exists.",
+    "usernameAlreadyExists": "Username already exists. Please try another one."
+}
