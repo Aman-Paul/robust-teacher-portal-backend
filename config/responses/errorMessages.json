@@ -2,6 +2,6 @@
     "internalServerError": "Internal server error.",
     "userAlreadyExists": "User already exists.",
     "usernameAlreadyExists": "Username already exists. Please try another one.",
-    "noSuchUserExists": "No such exists.",
+    "noSuchUserExists": "No such user exists.",
     "incorrectCredentials": "Incorrect credentials"
 }
