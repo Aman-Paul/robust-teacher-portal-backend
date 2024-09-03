@@ -1,9 +1,6 @@
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
-const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
-const session = require('express-session');
 
 require('dotenv').config()
 
@@ -18,9 +15,6 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
-app.use(session({ secret: 'zxcvbnmasdfghjkl', resave: false, saveUninitialized: true }));
-app.use(passport.initialize());
-app.use(passport.session());
 
 initializeDatabase();
 
