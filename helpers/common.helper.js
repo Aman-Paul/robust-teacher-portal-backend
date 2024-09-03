@@ -1,7 +1,7 @@
-const responseHandler = (message, data = {}, status = 200) => {
+const responseHandler = (message, data = {}, status = 200, success = true) => {
     return {
         message,
-        status,
+        success,
         data
     }
 } 

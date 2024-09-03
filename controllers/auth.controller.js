@@ -14,7 +14,7 @@ const signUp = async (req, res, next) => {
        const missingParams = validationParams.signUpParams.filter(param => !req.body[param]);
 
        if(missingParams.length) {
-        res.status(StatusCodes.BAD_REQUEST).send(commonHelper.responseHandler(`${missingParams[0]} cannot be empty`, {}, StatusCodes.BAD_REQUEST));
+        res.status(StatusCodes.BAD_REQUEST).send(commonHelper.responseHandler(`${missingParams[0]} cannot be empty`, {}, false));
         return true;
        }
 
@@ -23,12 +23,12 @@ const signUp = async (req, res, next) => {
         Users.findOne({ where: { name: username }})
     ]);
        if(userData) {
-        res.status(StatusCodes.BAD_REQUEST).send(commonHelper.responseHandler(errorMessages.userAlreadyExists, {}, StatusCodes.BAD_REQUEST));
+        res.status(StatusCodes.BAD_REQUEST).send(commonHelper.responseHandler(errorMessages.userAlreadyExists, {}, false));
         return true;
        }
 
        if(userNameData) {
-        res.status(StatusCodes.BAD_REQUEST).send(commonHelper.responseHandler(errorMessages.usernameAlreadyExists, {}, StatusCodes.BAD_REQUEST));
+        res.status(StatusCodes.BAD_REQUEST).send(commonHelper.responseHandler(errorMessages.usernameAlreadyExists, {}, false));
         return true;
        }
 
@@ -37,7 +37,7 @@ const signUp = async (req, res, next) => {
        const newUser = await Users.create({ name: username, password: hashedPassword, email});
 
 
-       res.status(StatusCodes.CREATED).send(commonHelper.responseHandler(successMessages.userSignedUpSuccessfully, signToken(newUser.dataValues.id, newUser.dataValues.email), StatusCodes.CREATED));
+       res.status(StatusCodes.CREATED).send(commonHelper.responseHandler(successMessages.userSignedUpSuccessfully, signToken(newUser.dataValues.id, newUser.dataValues.email), true));
 
 
     } catch (error) {
@@ -47,7 +47,7 @@ const signUp = async (req, res, next) => {
         .send(commonHelper.responseHandler(
             error, 
             errorMessages.internalServerError, 
-            StatusCodes.INTERNAL_SERVER_ERROR 
+            false
         ));
     }
 }
@@ -57,24 +57,24 @@ const signIn = async (req, res, next) => {
         const { email, password }  = req.body;
         const missingParams = validationParams.signInParams.filter(param => !req.body[param]);
         if(missingParams.length) {
-            res.status(StatusCodes.BAD_REQUEST).send(commonHelper.responseHandler(`${missingParams[0]} cannot be empty`, {}, StatusCodes.BAD_REQUEST));
+            res.status(StatusCodes.BAD_REQUEST).send(commonHelper.responseHandler(`${missingParams[0]} cannot be empty`, {}, false));
             return true;
         }
 
         const userData = await Users.findOne({ where: { email }, attributes: ["email", "password"]});
 
         if(!userData) {
-            res.status(StatusCodes.BAD_REQUEST).send(commonHelper.responseHandler(errorMessages.noSuchUserExists, {}, StatusCodes.BAD_REQUEST));
+            res.status(StatusCodes.BAD_REQUEST).send(commonHelper.responseHandler(errorMessages.noSuchUserExists, {}, false));
             return true;
         }
 
         const isPassCorrect = await verifyPassword(userData.password, password);
         if(!isPassCorrect) {
-            res.status(StatusCodes.BAD_REQUEST).send(commonHelper.responseHandler(errorMessages.incorrectCredentials, {}, StatusCodes.BAD_REQUEST));
+            res.status(StatusCodes.BAD_REQUEST).send(commonHelper.responseHandler(errorMessages.incorrectCredentials, {}, false));
             return true;
         }
 
-        res.status(StatusCodes.ACCEPTED).send(commonHelper.responseHandler(successMessages.userSignedUpSuccessfully, signToken(userData.dataValues.id, userData.dataValues.email), StatusCodes.ACCEPTED));
+        res.status(StatusCodes.ACCEPTED).send(commonHelper.responseHandler(successMessages.userSignedUpSuccessfully, signToken(userData.dataValues.id, userData.dataValues.email), true));
         
     } catch (error) {
         console.error("Error in signIn:", error);
@@ -83,7 +83,7 @@ const signIn = async (req, res, next) => {
         .send(commonHelper.responseHandler(
             error, 
             errorMessages.internalServerError, 
-            StatusCodes.INTERNAL_SERVER_ERROR 
+            false
         ));
     }
 }
