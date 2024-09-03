@@ -51,6 +51,57 @@ const signUp = async (req, res, next) => {
         ));
     }
 }
+
+const signIn = async (req, res, next) => {
+    try {
+        const { email, password }  = req.body;
+        const missingParams = validationParams.signInParams.filter(param => !req.body[param]);
+        if(missingParams.length) {
+            res.status(StatusCodes.BAD_REQUEST).send(commonHelper.responseHandler(`${missingParams[0]} cannot be empty`, {}, StatusCodes.BAD_REQUEST));
+            return true;
+        }
+
+        const userData = await Users.findOne({ where: { email }, attributes: ["email", "password"]});
+
+        if(!userData) {
+            res.status(StatusCodes.BAD_REQUEST).send(commonHelper.responseHandler(errorMessages.noSuchUserExists, {}, StatusCodes.BAD_REQUEST));
+            return true;
+        }
+
+        const isPassCorrect = await verifyPassword(userData.password, password);
+        if(!isPassCorrect) {
+            res.status(StatusCodes.BAD_REQUEST).send(commonHelper.responseHandler(errorMessages.incorrectCredentials, {}, StatusCodes.BAD_REQUEST));
+            return true;
+        }
+
+        res.status(StatusCodes.ACCEPTED).send(commonHelper.responseHandler(successMessages.userSignedUpSuccessfully, signToken(userData.dataValues.id, userData.dataValues.email), StatusCodes.ACCEPTED));
+        
+    } catch (error) {
+        console.error("Error in signIn:", error);
+        res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .send(commonHelper.responseHandler(
+            error, 
+            errorMessages.internalServerError, 
+            StatusCodes.INTERNAL_SERVER_ERROR 
+        ));
+    }
+}
+
+const verifyPassword = (storedPass, inputPass) => {
+    return argon2
+            .verify(storedPass, inputPass)
+            .then((pwMatches) => {
+                if (!pwMatches) {
+                    return false;
+                }
+                return true;
+            })
+            .catch((error) => {
+                return false;
+            });
+}
+
 const signToken = (userId, email) => {
     const payload = {
         sub: userId,
@@ -69,5 +120,6 @@ const signToken = (userId, email) => {
 }
 
 module.exports = { 
-    signUp 
+    signUp,
+    signIn
 } 

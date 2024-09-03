@@ -1,3 +1,4 @@
 {
-    "signUpParams": ["email", "password", "username"]
+    "signUpParams": ["email", "password", "username"],
+    "signInParams": ["email", "password"]
 }
